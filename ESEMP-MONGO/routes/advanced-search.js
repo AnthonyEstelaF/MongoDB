@@ -2,9 +2,31 @@ var express = require('express');
 var router = express.Router();
 
 const MongoClient = require('mongodb').MongoClient; //Importo la libreria mongodb
-
+const uri = 'mongodb+srv://anro01:antony123@anroo-sample.x4cug.mongodb.net/anroo-sample?retryWrites=true&w=majority'
 
 router.get('/length_year/:length/:year', function (req, res, next) {
+    console.log(req.params); //Leggo i parametri passati all'url
+    let num = parseInt(req.params.length);
+    let num2 = parseInt(req.params.year);
+    const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    client.connect(getMovieLY);
+    function getMovieLY (err) {
+        if(err) console.log("connesione al db non eseguita :(")
+        else {
+            const collection = client.db("sample_mflix").collection("movies");
+            collection.find({ 'runtime': num},{'year':num2 }).toArray(callBackQuery);
+        }
+        
+    }
+    function callBackQuery (err,result){
+        if (err) Console.log(err);
+        else res.send(result);
+        client.close();
+    }
+});
+module.exports = router;
+
+/* router.get('/length_year/:length/:year', function (req, res, next) {
     console.log(req.params); //Leggo i parametri passati all'url
     let num = parseInt(req.params.length);
     let num2 = parseInt(req.params.year);
@@ -21,4 +43,4 @@ router.get('/length_year/:length/:year', function (req, res, next) {
 
     });
 });
-module.exports = router;
+module.exports = router;*/
